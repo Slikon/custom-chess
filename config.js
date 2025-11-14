@@ -1,5 +1,5 @@
 const COLLECTIONS = [
-    'warcraft',
+    'warcraft3',
 ];
 
 const SELECTED_COLLECTION = COLLECTIONS[0];
