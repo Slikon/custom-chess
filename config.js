@@ -3,4 +3,3 @@ const COLLECTIONS = [
 ];
 
 const SELECTED_COLLECTION = COLLECTIONS[0];
-
