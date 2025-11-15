@@ -3,28 +3,31 @@
   'use strict';
 
   let styleElement = null;
+  let currentCollection = null;
 
   // Function to inject custom CSS for pieces
-  function injectCustomPiecesStyles() {
+  function injectCustomPiecesStyles(collection) {
     // Remove existing style if present
     if (styleElement && styleElement.parentNode) {
       styleElement.parentNode.removeChild(styleElement);
       styleElement = null;
     }
 
+    currentCollection = collection;
+
     // Get the URL of the custom piece images from the extension
-    const customBlackPawnUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/black/bp.png`);
-    const customWhitePawnUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/white/wp.png`);
-    const customWhiteRookUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/white/wr.png`);
-    const customWhiteKnightUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/white/wn.png`);
-    const customWhiteBishopUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/white/wb.png`);
-    const customWhiteQueenUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/white/wq.png`);
-    const customWhiteKingUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/white/wk.png`);
-    const customBlackRookUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/black/br.png`);
-    const customBlackKnightUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/black/bn.png`);
-    const customBlackBishopUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/black/bb.png`);
-    const customBlackQueenUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/black/bq.png`);
-    const customBlackKingUrl = chrome.runtime.getURL(`collections/${SELECTED_COLLECTION}/black/bk.png`);
+    const customBlackPawnUrl = chrome.runtime.getURL(`collections/${collection}/black/bp.png`);
+    const customWhitePawnUrl = chrome.runtime.getURL(`collections/${collection}/white/wp.png`);
+    const customWhiteRookUrl = chrome.runtime.getURL(`collections/${collection}/white/wr.png`);
+    const customWhiteKnightUrl = chrome.runtime.getURL(`collections/${collection}/white/wn.png`);
+    const customWhiteBishopUrl = chrome.runtime.getURL(`collections/${collection}/white/wb.png`);
+    const customWhiteQueenUrl = chrome.runtime.getURL(`collections/${collection}/white/wq.png`);
+    const customWhiteKingUrl = chrome.runtime.getURL(`collections/${collection}/white/wk.png`);
+    const customBlackRookUrl = chrome.runtime.getURL(`collections/${collection}/black/br.png`);
+    const customBlackKnightUrl = chrome.runtime.getURL(`collections/${collection}/black/bn.png`);
+    const customBlackBishopUrl = chrome.runtime.getURL(`collections/${collection}/black/bb.png`);
+    const customBlackQueenUrl = chrome.runtime.getURL(`collections/${collection}/black/bq.png`);
+    const customBlackKingUrl = chrome.runtime.getURL(`collections/${collection}/black/bk.png`);
     
     // Create a style element
     styleElement = document.createElement('style');
@@ -122,9 +125,9 @@
   }
 
   // Function to apply or remove styles based on enabled state
-  function applyCustomization(isEnabled) {
+  function applyCustomization(isEnabled, collection) {
     if (isEnabled) {
-      injectCustomPiecesStyles();
+      injectCustomPiecesStyles(collection);
     } else {
       removeCustomPiecesStyles();
     }
@@ -133,23 +136,35 @@
   // Listen for messages from the popup
   chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.action === 'toggleCustomPieces') {
-      applyCustomization(request.enabled);
+      chrome.storage.sync.get(['selectedCollection'], function(result) {
+        const collection = result.selectedCollection || DEFAULT_COLLECTION;
+        applyCustomization(request.enabled, collection);
+      });
+    } else if (request.action === 'changeCollection') {
+      // Re-inject styles with new collection if currently enabled
+      chrome.storage.sync.get(['customPiecesEnabled'], function(result) {
+        const isEnabled = result.customPiecesEnabled !== undefined ? result.customPiecesEnabled : true;
+        if (isEnabled) {
+          applyCustomization(true, request.collection);
+        }
+      });
     }
   });
 
   // Initialize: Check if customization should be enabled
-  chrome.storage.sync.get(['customPiecesEnabled'], function(result) {
+  chrome.storage.sync.get(['customPiecesEnabled', 'selectedCollection'], function(result) {
     // Default to enabled (true) if not set
     const isEnabled = result.customPiecesEnabled !== undefined ? result.customPiecesEnabled : true;
+    const collection = result.selectedCollection || DEFAULT_COLLECTION;
     
     // Wait for DOM to be ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
-        applyCustomization(isEnabled);
+        applyCustomization(isEnabled, collection);
       });
     } else {
       // DOM is already ready
-      applyCustomization(isEnabled);
+      applyCustomization(isEnabled, collection);
     }
   });
 })();
