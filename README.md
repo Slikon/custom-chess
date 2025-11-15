@@ -1,5 +1,7 @@
 # Chess Piece Customizer - Chrome Extension
 
+![Chess Piece Customizer](screenshots/demo.png)
+
 A Chrome extension that allows you to customize all chess pieces on Chess.com with themed collections. Features multiple piece sets and an easy on/off toggle.
 
 ## 🚀 Quick Start
