@@ -64,7 +64,11 @@ custom-chess/
 
 ## 🎨 Creating Your Own Collection
 
-Want to add your own custom chess pieces? Here's how:
+Want to add your own custom chess pieces? 
+
+📖 **For detailed instructions on creating custom pieces and collections, see [PIECE_CREATION.md](PIECE_CREATION.md)**
+
+Quick overview:
 
 ### 1. Create Your Collection Folder
 
