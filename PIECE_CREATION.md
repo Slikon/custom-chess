@@ -58,7 +58,7 @@ Open `config.js` in the project root and add your collection to the COLLECTIONS 
 
 ```javascript
 const COLLECTIONS = [
-    { id: 'warcraft3', name: 'Warcraft III' },
+    { id: 'warcraft', name: 'Warcraft' },
     { id: 'my-collection', name: 'My Custom Collection' },  // Add your collection here
 ];
 ```
