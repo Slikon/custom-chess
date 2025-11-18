@@ -1,5 +1,5 @@
 const COLLECTIONS = [
-    { id: 'warcraft', name: 'Warcraft' },
+    { id: 'warcraft3', name: 'Warcraft' },
 ];
 
 const DEFAULT_COLLECTION = COLLECTIONS[0].id;
